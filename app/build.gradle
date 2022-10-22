@@ -16,6 +16,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -116,11 +118,12 @@ dependencies {
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:$dexMakerVersion"
     androidTestImplementation('org.koin:koin-test:2.0.1') { exclude group: 'org.mockito' }
 
-
+    //firebase
+    implementation 'com.firebaseui:firebase-ui-auth:5.0.0'
 
     //Maps & Geofencing
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
 
-
+    implementation 'androidx.multidex:multidex:2.0.1'
 }
