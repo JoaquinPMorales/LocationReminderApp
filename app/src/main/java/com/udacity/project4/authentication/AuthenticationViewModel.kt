@@ -1,9 +1,10 @@
 package com.udacity.project4.authentication
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 
-class AuthenticationViewModel : ViewModel() {
+class AuthenticationViewModel(app: Application) : ViewModel() {
     enum class AuthenticationState {
         AUTHENTICATED, UNAUTHENTICATED
     }
