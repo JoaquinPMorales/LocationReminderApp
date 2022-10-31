@@ -127,5 +127,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersion"
 
+    implementation "androidx.activity:activity:$activityVersion"
+    implementation "androidx.fragment:fragment:$fragmentVersion"
+
     implementation 'androidx.multidex:multidex:2.0.1'
 }
