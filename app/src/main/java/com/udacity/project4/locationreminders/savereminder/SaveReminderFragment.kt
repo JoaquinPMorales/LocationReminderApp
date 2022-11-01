@@ -2,7 +2,6 @@ package com.udacity.project4.locationreminders.savereminder
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.annotation.TargetApi
 import android.app.Activity.RESULT_OK
 import android.app.PendingIntent
 import android.content.Intent
@@ -207,7 +206,7 @@ class SaveReminderFragment : BaseFragment() {
             .setCircularRegion(
                 data.latitude ?: 0.0,
                 data.longitude ?: 0.0,
-                1000F)
+                100f)
             .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
