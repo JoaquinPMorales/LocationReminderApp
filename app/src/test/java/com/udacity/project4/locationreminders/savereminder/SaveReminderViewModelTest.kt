@@ -19,6 +19,7 @@ import kotlinx.coroutines.runBlocking
 import org.hamcrest.MatcherAssert
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.core.Is
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -103,5 +104,6 @@ class SaveReminderViewModelTest {
             assertThat(resultGetReminder.data.longitude, Is.`is`(reminder.longitude))
         }
         assertThat(saveReminderViewModel.showToast.getOrAwaitValue(), Is.`is`("Reminder Saved !"))
+        assertEquals(saveReminderViewModel.navigationCommand.getOrAwaitValue(), NavigationCommand.Back)
     }
 }
