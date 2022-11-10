@@ -42,7 +42,6 @@ Explain what each test does and why
 
 ```
 1.androidTest
-        FakeAndroidTestDataSource: Fake our Data source(LocalDataSource) acting as a test double for interface/instrumented tests
         RemindersDaoTest: Test our Dao to check whether the database operations are correct or not
         RemindersLocalRepositoryTest: Test our repository 
         ReminderListFragmentTest: Test our ReminderListFragment UI logic, triggering actions and checking if appears or not the correct UI stuff
