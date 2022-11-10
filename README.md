@@ -42,9 +42,19 @@ Explain what each test does and why
 
 ```
 1.androidTest
-        //TODO: Students explain their testing here.
+        FakeAndroidTestDataSource: Fake our Data source(LocalDataSource) acting as a test double for interface/instrumented tests
+        RemindersDaoTest: Test our Dao to check whether the database operations are correct or not
+        RemindersLocalRepositoryTest: Test our repository 
+        ReminderListFragmentTest: Test our ReminderListFragment UI logic, triggering actions and checking if appears or not the correct UI stuff
+        DataBindingIdlingResource: Util that help us to test UI things with DataBinding
+        RemindersActivityTest: Our full end to end test for all the App logic
+        
 2. test
-        //TODO: Students explain their testing here.
+        FakeDataSource: Fake our Data source(LocalDataSource) acting as a test double
+        RemindersListViewModelTest: Test our ReminderListViewModel
+        SaveReminderViewModelTest: Test our SaveReminderViewModel
+        LiveDataTestUtil: util helps us to test LiveData
+        MainCoroutineRule: another util that help us to test all the coroutine stuff
 ```
 
 ## Project Instructions
