@@ -57,6 +57,8 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
      * at this step we will initialize Koin related code to be able to use it in out testing.
+     *
+     * Init repository, creating module after stop Koin, with our DB and localDataSource
      */
     @Before
     fun init() {
@@ -91,6 +93,10 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         }
     }
 
+    /**
+     * Idling resources tell Espresso that the app is idle or busy. This is needed when operations
+     * are not scheduled in the main Looper (for example when executed on a different thread).
+     */
     @Before
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
@@ -106,6 +112,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
+    /**
+     * Test all logic app trying to create a Reminder from scratch
+     */
     @Test
     fun createReminder_successfullyCreated(){
         // 1. Start RemindersActivity
@@ -115,28 +124,38 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         // 2. Add a reminder by clicking on the FAB and saving it.
         Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
 
+        //Replace text to fill title and description
         Espresso.onView(ViewMatchers.withId(R.id.reminderTitle)).perform(ViewActions.replaceText("SANTIAGO BERNABEU"))
         Espresso.onView(ViewMatchers.withId(R.id.reminderDescription)).perform(ViewActions.replaceText("SANTIAGO BERNABEU STADIUM"))
 
         // 3. Select location
+        //Click on selectLocation
         Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.click())
+        //Click on map to select location
         Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.click())
         Thread.sleep(1000)
 
         // 4. Save location
+        //Check saveBtn is displayed
         Espresso.onView(withId(R.id.saveBtn)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        //Click on save button to save location
         Espresso.onView(withId(R.id.saveBtn)).perform(ViewActions.click())
 
         // 5. Save Reminder
+        //Click on save to save reminder
         Espresso.onView(ViewMatchers.withId(R.id.saveReminder)).perform(ViewActions.click())
+        //Check toast about geofence is displayed
         Espresso.onView(ViewMatchers.withText(R.string.geofence_entered))
             .inRoot(RootMatchers.withDecorView(IsNot.not((ContextUtils.getActivity(appContext)?.window?.decorView)))).check(
                 ViewAssertions.matches(ViewMatchers.isDisplayed()))
         Thread.sleep(2000)
 
         // 6. Verify it was added.
+        //Check title reminder repriously added is displayed
         Espresso.onView(ViewMatchers.withText("SANTIAGO BERNABEU")).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        //Check description reminder repriously added is displayed
         Espresso.onView(ViewMatchers.withText("SANTIAGO BERNABEU STADIUM")).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+        //Check noDataTextView is not displayed because now there is a reminder
         Espresso.onView(withId(R.id.noDataTextView))
             .check(ViewAssertions.matches(ViewMatchers.withEffectiveVisibility(ViewMatchers.Visibility.GONE)))
 
@@ -144,6 +163,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         activityScenario.close()
     }
 
+    /**
+     * Test Detail screen is displayed after click on a reminder in the list screen
+     */
     @Test
     fun navigateToRemindersDetail(){
         // 1. Before start activity, added a reminder to the repo
@@ -153,6 +175,7 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
             40.45317746686187,
             -3.68831224351148,
             "1")
+        //Save reminder
         runBlocking {
             repository.saveReminder(reminder)
         }
@@ -167,7 +190,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         Espresso.onView(ViewMatchers.withText(reminder.location)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
 
         // 4. Go to details fragment
+        //Check recyclerView with Reminder list is displayed
         onView(withId(R.id.reminderssRecyclerView)).check(matches(isDisplayed()))
+        //Click on first element of the recyclerView
         Espresso.onView(ViewMatchers.withId(R.id.reminderssRecyclerView)).perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, ViewActions.click()))
         Thread.sleep(1000)
 
@@ -180,6 +205,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         activityScenario.close()
     }
 
+    /**
+     * Test creating a reminder without Location and the error should appear
+     */
     @Test
     fun createWrongReminder_noLocation() = runBlocking {
         // 1. Start RemindersActivity
@@ -189,7 +217,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         // 2. Add a reminder by clicking on the FAB and saving it.
         Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
 
+        //Fill Title
         Espresso.onView(ViewMatchers.withId(R.id.reminderTitle)).perform(ViewActions.replaceText("SANTIAGO BERNABEU"))
+        //Fill description
         Espresso.onView(ViewMatchers.withId(R.id.reminderDescription)).perform(ViewActions.replaceText("SANTIAGO BERNABEU STADIUM"))
 
         // 3. Try to save Reminder without location
@@ -202,6 +232,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         activityScenario.close()
     }
 
+    /**
+     * Test creating a reminder without Title and the error should appear
+     */
     @Test
     fun createWrongReminder_noTitle() = runBlocking {
         // 1. Start RemindersActivity
@@ -209,7 +242,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         // 2. Add a reminder by clicking on the FAB and saving it.
+        //Click on add reminder button
         Espresso.onView(ViewMatchers.withId(R.id.addReminderFAB)).perform(ViewActions.click())
+        //Fill Description
         Espresso.onView(ViewMatchers.withId(R.id.reminderDescription)).perform(ViewActions.replaceText("SANTIAGO BERNABEU STADIUM"))
 
         // 3. Try to save Reminder without title

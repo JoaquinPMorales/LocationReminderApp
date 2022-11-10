@@ -24,13 +24,19 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
+    //LocalDataSource
     private lateinit var localDataSource: ReminderDataSource
+    //Database
     private lateinit var database: RemindersDatabase
 
     // Executes each task synchronously using Architecture Components.
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
+    /**
+     * Create DB in memory and our LocalDataSource
+     *
+     */
     @Before
     fun setup() {
         // Using an in-memory database for testing, because it doesn't survive killing the process.
@@ -47,11 +53,19 @@ class RemindersLocalRepositoryTest {
             )
     }
 
+    /**
+     * Close DB in memory.
+     *
+     */
     @After
     fun cleanUp() {
         database.close()
     }
 
+    /**
+     * Test to get a Reminder that exist.
+     *
+     */
     @Test
     fun saveReminder_getReminder() = runBlocking {
         // GIVEN - A new reminder saved in the database.
@@ -78,9 +92,15 @@ class RemindersLocalRepositoryTest {
         }
     }
 
+    /**
+     * Test to get a Reminder that not exist.
+     *
+     */
     @Test
     fun retrievesReminder_errorNotExist() = runBlocking {
+        //Get a reminder that not exist
         val existReminder = localDataSource.getReminder("1")
+        //Check we get an error because Reminder not exist
         existReminder as Result.Error
         Assert.assertThat(existReminder.message, Is.`is`("Reminder not found!"))
     }

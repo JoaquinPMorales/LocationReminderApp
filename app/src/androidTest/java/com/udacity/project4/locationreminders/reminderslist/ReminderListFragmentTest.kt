@@ -58,6 +58,9 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
     // An idling resource that waits for Data Binding to have no pending bindings.
     private val dataBindingIdlingResource = DataBindingIdlingResource()
 
+    /**
+     * Init repository, creating module after stop Koin, with our DB and localDataSource
+     */
     @Before
     fun initRepository() {
         stopKoin()
@@ -83,6 +86,7 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         //Get our real repository
         repository = get()
 
+        //clear reminders to start fresh
         runBlocking {
             repository.deleteAllReminders()
         }
@@ -107,10 +111,15 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
     }
 
+    /**
+     * Test click add btn and it navigates to SaveReminder screen.
+     */
     @Test
     fun clickAddReminderBtn_navigateToSaveFragment() {
         // GIVEN - On the Reminder List screen
+        //launch fragment
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
+        //Mock nav controller to catch calls to it
         val navController = mock(NavController::class.java)
         dataBindingIdlingResource.monitorFragment(fragmentScenario = scenario)
         scenario.onFragment {
@@ -124,8 +133,12 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
         Mockito.verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
     }
 
+    /**
+     * Test all reminders created appears on Reminder List screen
+     */
     @Test
     fun reminderList_shownListAndNoDataTextViewNotShown(): Unit = runBlocking{
+        //Three valid reminders
         val reminder = ReminderDTO("Santiago Bernabeu",
             "Santiago Bernabeu Stadium",
             "location",
@@ -144,22 +157,29 @@ class ReminderListFragmentTest: AutoCloseKoinTest() {
             48.85305821486229,
             -1.35394093963818,
                 "3")
+        //Save them
         repository.saveReminder(reminder)
         repository.saveReminder(reminder2)
         repository.saveReminder(reminder3)
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario = scenario)
 
+        //Check all titles from reminders saved previously appears on Reminder List
         onView(withText(reminder.title)).check(matches(isDisplayed()))
         onView(withText(reminder2.title)).check(matches(isDisplayed()))
         onView(withText(reminder3.title)).check(matches(isDisplayed()))
+        //Check noData view not appear
         onView(withId(R.id.noDataTextView)).check(ViewAssertions.matches(IsNot.not(isDisplayed())))
     }
 
+    /**
+     * Test empty list and show noDataTextView
+     */
     @Test
     fun noRemindersData_shownNoDataTextView() = runBlockingTest {
         val scenario = launchFragmentInContainer<ReminderListFragment>(Bundle(), R.style.AppTheme)
         dataBindingIdlingResource.monitorFragment(fragmentScenario = scenario)
+        //Check noDataTextView is displayed
         onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
     }
 
