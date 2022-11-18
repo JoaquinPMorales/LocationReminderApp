@@ -14,11 +14,7 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
      *
      */
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-        //Check whether reminders list is null or empty
-        return if (reminders.isNullOrEmpty()){
-            Result.Error("No Reminders list")
-        }
-        else if(isError)//just to force an error getting reminder list
+        return if(isError)//just to force an error getting reminder list
         {
             Result.Error("Error message")
         }
@@ -46,17 +42,18 @@ class FakeDataSource(var reminders: MutableList<ReminderDTO>? = mutableListOf())
         val reminder = reminders?.find {
             it.id == id
         }
-        return if (reminder == null) {
-            //ID does not exist
-            Result.Error("No Reminder")
-        }
-        else if(isError)
+        return if(isError)
         {
             //Forced error trying to retrieve a reminder
             Result.Error("Error message")
         } else {
-            //ID exists so a Success is returned with the reminder info
-            Result.Success(reminder)
+            if (reminder == null) {
+                //ID does not exist
+                Result.Error("No Reminder")
+            }
+            else
+                //ID exists so a Success is returned with the reminder info
+                Result.Success(reminder)
         }
     }
 
