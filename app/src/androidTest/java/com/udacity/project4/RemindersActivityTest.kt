@@ -130,9 +130,9 @@ class RemindersActivityTest : AutoCloseKoinTest() {// Extended Koin Test - embed
 
         // 3. Select location
         //Click on selectLocation
-        Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.longClick())
+        Espresso.onView(ViewMatchers.withId(R.id.selectLocation)).perform(ViewActions.click())
         //Click on map to select location
-        Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.click())
+        Espresso.onView(ViewMatchers.withId(R.id.map)).perform(ViewActions.longClick())
         Thread.sleep(1000)
 
         // 4. Save location
